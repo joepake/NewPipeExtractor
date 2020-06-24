@@ -1,15 +1,5 @@
 package org.schabi.newpipe.extractor.services.peertube;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.schabi.newpipe.extractor.ExtractorAsserts.assertEmpty;
-import static org.schabi.newpipe.extractor.ExtractorAsserts.assertIsSecureUrl;
-import static org.schabi.newpipe.extractor.ServiceList.PeerTube;
-import static org.schabi.newpipe.extractor.services.DefaultTests.defaultTestGetPageInNewExtractor;
-import static org.schabi.newpipe.extractor.services.DefaultTests.defaultTestMoreItems;
-import static org.schabi.newpipe.extractor.services.DefaultTests.defaultTestRelatedItems;
-
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -20,11 +10,16 @@ import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.services.BaseChannelExtractorTest;
 import org.schabi.newpipe.extractor.services.peertube.extractors.PeertubeChannelExtractor;
 
+import static org.junit.Assert.*;
+import static org.schabi.newpipe.extractor.ExtractorAsserts.assertIsSecureUrl;
+import static org.schabi.newpipe.extractor.ServiceList.PeerTube;
+import static org.schabi.newpipe.extractor.services.DefaultTests.*;
+
 /**
  * Test for {@link PeertubeChannelExtractor}
  */
 public class PeertubeChannelExtractorTest {
-    public static class KDE implements BaseChannelExtractorTest {
+    public static class DanDAugeTutoriels implements BaseChannelExtractorTest {
         private static PeertubeChannelExtractor extractor;
 
         @BeforeClass
@@ -33,7 +28,7 @@ public class PeertubeChannelExtractorTest {
             // setting instance might break test when running in parallel
             PeerTube.setInstance(new PeertubeInstance("https://peertube.mastodon.host", "PeerTube on Mastodon.host"));
             extractor = (PeertubeChannelExtractor) PeerTube
-                    .getChannelExtractor("https://peertube.mastodon.host/api/v1/accounts/kde");
+                    .getChannelExtractor("https://peertube.mastodon.host/api/v1/video-channels/7682d9f2-07be-4622-862e-93ec812e2ffa");
             extractor.fetchPage();
         }
 
@@ -48,22 +43,22 @@ public class PeertubeChannelExtractorTest {
 
         @Test
         public void testName() throws ParsingException {
-            assertEquals("The KDE Community", extractor.getName());
+            assertEquals("Dan d'Auge tutoriels", extractor.getName());
         }
 
         @Test
         public void testId() throws ParsingException {
-            assertEquals("kde", extractor.getId());
+            assertEquals("video-channels/7682d9f2-07be-4622-862e-93ec812e2ffa", extractor.getId());
         }
 
         @Test
         public void testUrl() throws ParsingException {
-            assertEquals("https://peertube.mastodon.host/api/v1/accounts/kde", extractor.getUrl());
+            assertEquals("https://peertube.mastodon.host/api/v1/video-channels/7682d9f2-07be-4622-862e-93ec812e2ffa", extractor.getUrl());
         }
 
         @Test
         public void testOriginalUrl() throws ParsingException {
-            assertEquals("https://peertube.mastodon.host/accounts/kde", extractor.getOriginalUrl());
+            assertEquals("https://peertube.mastodon.host/video-channels/7682d9f2-07be-4622-862e-93ec812e2ffa", extractor.getOriginalUrl());
         }
 
         /*//////////////////////////////////////////////////////////////////////////
@@ -72,12 +67,12 @@ public class PeertubeChannelExtractorTest {
 
         @Test
         public void testRelatedItems() throws Exception {
-            defaultTestRelatedItems(extractor, PeerTube.getServiceId());
+            defaultTestRelatedItems(extractor);
         }
 
         @Test
         public void testMoreRelatedItems() throws Exception {
-            defaultTestMoreItems(extractor, PeerTube.getServiceId());
+            defaultTestMoreItems(extractor);
         }
 
         /*//////////////////////////////////////////////////////////////////////////
@@ -87,6 +82,21 @@ public class PeertubeChannelExtractorTest {
         @Test
         public void testDescription() throws ParsingException {
             assertNotNull(extractor.getDescription());
+        }
+
+        @Test
+        public void testParentChannelName() throws ParsingException {
+            assertEquals("libux", extractor.getParentChannelName());
+        }
+
+        @Test
+        public void testParentChannelUrl() throws ParsingException {
+            assertEquals("https://peertube.mastodon.host/accounts/libux", extractor.getParentChannelUrl());
+        }
+
+        @Test
+        public void testParentChannelAvatarUrl() throws ParsingException {
+            assertIsSecureUrl(extractor.getParentChannelAvatarUrl());
         }
 
         @Test
@@ -102,16 +112,16 @@ public class PeertubeChannelExtractorTest {
 
         @Test
         public void testFeedUrl() throws ParsingException {
-            assertEmpty(extractor.getFeedUrl());
+            assertEquals("https://peertube.mastodon.host/feeds/videos.xml?videoChannelId=1361", extractor.getFeedUrl());
         }
 
         @Test
         public void testSubscriberCount() throws ParsingException {
-            assertTrue("Wrong subscriber count", extractor.getSubscriberCount() >= 5);
+            assertTrue("Wrong subscriber count", extractor.getSubscriberCount() >= 4);
         }
     }
 
-    public static class Booteille implements BaseChannelExtractorTest {
+    public static class Divers implements BaseChannelExtractorTest {
         private static PeertubeChannelExtractor extractor;
 
         @BeforeClass
@@ -120,7 +130,7 @@ public class PeertubeChannelExtractorTest {
             // setting instance might break test when running in parallel
             PeerTube.setInstance(new PeertubeInstance("https://peertube.mastodon.host", "PeerTube on Mastodon.host"));
             extractor = (PeertubeChannelExtractor) PeerTube
-                    .getChannelExtractor("https://peertube.mastodon.host/accounts/booteille");
+                    .getChannelExtractor("https://peertube.mastodon.host/video-channels/35080089-79b6-45fc-96ac-37e4d46a4457");
             extractor.fetchPage();
         }
 
@@ -131,7 +141,7 @@ public class PeertubeChannelExtractorTest {
         @Test
         public void testGetPageInNewExtractor() throws Exception {
             final ChannelExtractor newExtractor = PeerTube.getChannelExtractor(extractor.getUrl());
-            defaultTestGetPageInNewExtractor(extractor, newExtractor, PeerTube.getServiceId());
+            defaultTestGetPageInNewExtractor(extractor, newExtractor);
         }
 
         /*//////////////////////////////////////////////////////////////////////////
@@ -145,22 +155,22 @@ public class PeertubeChannelExtractorTest {
 
         @Test
         public void testName() throws ParsingException {
-            assertEquals("booteille", extractor.getName());
+            assertEquals("Divers", extractor.getName());
         }
 
         @Test
         public void testId() throws ParsingException {
-            assertEquals("booteille", extractor.getId());
+            assertEquals("video-channels/35080089-79b6-45fc-96ac-37e4d46a4457", extractor.getId());
         }
 
         @Test
         public void testUrl() throws ParsingException {
-            assertEquals("https://peertube.mastodon.host/api/v1/accounts/booteille", extractor.getUrl());
+            assertEquals("https://peertube.mastodon.host/api/v1/video-channels/35080089-79b6-45fc-96ac-37e4d46a4457", extractor.getUrl());
         }
 
         @Test
         public void testOriginalUrl() throws ParsingException {
-            assertEquals("https://peertube.mastodon.host/accounts/booteille", extractor.getOriginalUrl());
+            assertEquals("https://peertube.mastodon.host/video-channels/35080089-79b6-45fc-96ac-37e4d46a4457", extractor.getOriginalUrl());
         }
 
         /*//////////////////////////////////////////////////////////////////////////
@@ -169,12 +179,12 @@ public class PeertubeChannelExtractorTest {
 
         @Test
         public void testRelatedItems() throws Exception {
-            defaultTestRelatedItems(extractor, PeerTube.getServiceId());
+            defaultTestRelatedItems(extractor);
         }
 
         @Test
         public void testMoreRelatedItems() throws Exception {
-            defaultTestMoreItems(extractor, PeerTube.getServiceId());
+            defaultTestMoreItems(extractor);
         }
 
         /*//////////////////////////////////////////////////////////////////////////
@@ -184,6 +194,21 @@ public class PeertubeChannelExtractorTest {
         @Test
         public void testDescription() throws ParsingException {
             assertNotNull(extractor.getDescription());
+        }
+
+        @Test
+        public void testParentChannelName() throws ParsingException {
+            assertEquals("booteille", extractor.getParentChannelName());
+        }
+
+        @Test
+        public void testParentChannelUrl() throws ParsingException {
+            assertEquals("https://peertube.mastodon.host/accounts/booteille", extractor.getParentChannelUrl());
+        }
+
+        @Test
+        public void testParentChannelAvatarUrl() throws ParsingException {
+            assertIsSecureUrl(extractor.getParentChannelAvatarUrl());
         }
 
         @Test
@@ -199,7 +224,7 @@ public class PeertubeChannelExtractorTest {
 
         @Test
         public void testFeedUrl() throws ParsingException {
-            assertEmpty(extractor.getFeedUrl());
+            assertEquals("https://peertube.mastodon.host/feeds/videos.xml?videoChannelId=1227", extractor.getFeedUrl());
         }
 
         @Test

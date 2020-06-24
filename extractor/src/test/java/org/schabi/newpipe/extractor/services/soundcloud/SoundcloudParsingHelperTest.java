@@ -1,10 +1,12 @@
 package org.schabi.newpipe.extractor.services.soundcloud;
 
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.schabi.newpipe.DownloaderTestImpl;
 import org.schabi.newpipe.extractor.NewPipe;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class SoundcloudParsingHelperTest {
     @BeforeClass
@@ -15,13 +17,15 @@ public class SoundcloudParsingHelperTest {
     @Test
     public void assertThatHardcodedClientIdIsValid() throws Exception {
         assertTrue("Hardcoded client id is not valid anymore",
-                SoundcloudParsingHelper.checkIfHardcodedClientIdIsValid(DownloaderTestImpl.getInstance()));
+                SoundcloudParsingHelper.checkIfHardcodedClientIdIsValid());
     }
 
     @Test
     public void resolveUrlWithEmbedPlayerTest() throws Exception {
         Assert.assertEquals("https://soundcloud.com/trapcity", SoundcloudParsingHelper.resolveUrlWithEmbedPlayer("https://api.soundcloud.com/users/26057743"));
         Assert.assertEquals("https://soundcloud.com/nocopyrightsounds", SoundcloudParsingHelper.resolveUrlWithEmbedPlayer("https://api.soundcloud.com/users/16069159"));
+        Assert.assertEquals("https://soundcloud.com/trapcity", SoundcloudParsingHelper.resolveUrlWithEmbedPlayer("https://api-v2.soundcloud.com/users/26057743"));
+        Assert.assertEquals("https://soundcloud.com/nocopyrightsounds", SoundcloudParsingHelper.resolveUrlWithEmbedPlayer("https://api-v2.soundcloud.com/users/16069159"));
     }
 
     @Test

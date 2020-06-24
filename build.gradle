@@ -5,11 +5,12 @@ allprojects {
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 
-    version 'v0.18.0'
+    version 'v0.19.5'
     group 'com.github.TeamNewPipe'
 
     repositories {
         jcenter()
+        maven { url "https://jitpack.io" }
     }
 }
 

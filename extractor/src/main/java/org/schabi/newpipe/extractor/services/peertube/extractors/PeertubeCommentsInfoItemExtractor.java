@@ -1,5 +1,6 @@
 package org.schabi.newpipe.extractor.services.peertube.extractors;
 
+import com.grack.nanojson.JsonObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.schabi.newpipe.extractor.ServiceList;
@@ -8,8 +9,6 @@ import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.localization.DateWrapper;
 import org.schabi.newpipe.extractor.services.peertube.PeertubeParsingHelper;
 import org.schabi.newpipe.extractor.utils.JsonUtils;
-
-import com.grack.nanojson.JsonObject;
 
 
 public class PeertubeCommentsInfoItemExtractor implements CommentsInfoItemExtractor {
@@ -34,7 +33,7 @@ public class PeertubeCommentsInfoItemExtractor implements CommentsInfoItemExtrac
         String value;
         try {
             value = JsonUtils.getString(item, "account.avatar.path");
-        }catch(Exception e) {
+        } catch (Exception e) {
             value = "/client/assets/images/default-avatar.png";
         }
         return baseUrl + value;
@@ -46,16 +45,16 @@ public class PeertubeCommentsInfoItemExtractor implements CommentsInfoItemExtrac
     }
 
     @Override
-    public String getTextualPublishedTime() throws ParsingException {
+    public String getTextualUploadDate() throws ParsingException {
         return JsonUtils.getString(item, "createdAt");
     }
-    
+
     @Override
-    public DateWrapper getPublishedTime() throws ParsingException {
-        String textualUploadDate = getTextualPublishedTime();
+    public DateWrapper getUploadDate() throws ParsingException {
+        String textualUploadDate = getTextualUploadDate();
         return new DateWrapper(PeertubeParsingHelper.parseDateFrom(textualUploadDate));
     }
-    
+
     @Override
     public int getLikeCount() throws ParsingException {
         return -1;
@@ -67,7 +66,7 @@ public class PeertubeCommentsInfoItemExtractor implements CommentsInfoItemExtrac
         try {
             Document doc = Jsoup.parse(htmlText);
             return doc.body().text();
-        }catch(Exception e) {
+        } catch (Exception e) {
             return htmlText.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
         }
     }
@@ -79,26 +78,26 @@ public class PeertubeCommentsInfoItemExtractor implements CommentsInfoItemExtrac
     }
 
     @Override
-    public String getAuthorThumbnail() throws ParsingException {
+    public String getUploaderAvatarUrl() throws ParsingException {
         String value;
         try {
             value = JsonUtils.getString(item, "account.avatar.path");
-        }catch(Exception e) {
+        } catch (Exception e) {
             value = "/client/assets/images/default-avatar.png";
         }
         return baseUrl + value;
     }
 
     @Override
-    public String getAuthorName() throws ParsingException {
-        return JsonUtils.getString(item, "account.displayName");
+    public String getUploaderName() throws ParsingException {
+        return JsonUtils.getString(item, "account.name") + "@" + JsonUtils.getString(item, "account.host");
     }
 
     @Override
-    public String getAuthorEndpoint() throws ParsingException {
+    public String getUploaderUrl() throws ParsingException {
         String name = JsonUtils.getString(item, "account.name");
         String host = JsonUtils.getString(item, "account.host");
-        return ServiceList.PeerTube.getChannelLHFactory().fromId(name + "@" + host, baseUrl).getUrl();
+        return ServiceList.PeerTube.getChannelLHFactory().fromId("accounts/" + name + "@" + host, baseUrl).getUrl();
     }
-    
+
 }

@@ -1,9 +1,11 @@
 package org.schabi.newpipe.extractor.stream;
 
+import org.schabi.newpipe.extractor.MediaFormat;
+
 import java.io.Serializable;
 import java.util.List;
 
-import org.schabi.newpipe.extractor.MediaFormat;
+import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
 
 /**
  * Creates a stream object from url, format and optional torrent url
@@ -22,19 +24,19 @@ public abstract class Stream implements Serializable {
     /**
      * Instantiates a new stream object.
      *
-     * @param url the url
+     * @param url    the url
      * @param format the format
      */
     public Stream(String url, MediaFormat format) {
         this(url, null, format);
     }
-    
+
     /**
      * Instantiates a new stream object.
      *
-     * @param url the url
+     * @param url        the url
      * @param torrentUrl the url to torrent file, example https://webtorrent.io/torrents/big-buck-bunny.torrent
-     * @param format the format
+     * @param format     the format
      */
     public Stream(String url, String torrentUrl, MediaFormat format) {
         this.url = url;
@@ -61,7 +63,7 @@ public abstract class Stream implements Serializable {
      * Check if the list already contains one stream with equals stats
      */
     public static boolean containSimilarStream(Stream stream, List<? extends Stream> streamList) {
-        if (stream == null || streamList == null) return false;
+        if (isNullOrEmpty(streamList)) return false;
         for (Stream cmpStream : streamList) {
             if (stream.equalStats(cmpStream)) return true;
         }
@@ -76,7 +78,7 @@ public abstract class Stream implements Serializable {
     public String getUrl() {
         return url;
     }
-    
+
     /**
      * Gets the torrent url.
      *

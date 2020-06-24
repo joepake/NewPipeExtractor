@@ -1,17 +1,10 @@
 package org.schabi.newpipe.extractor.services.youtube;
 
-import static java.util.Arrays.asList;
-import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.AUDIO;
-import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.COMMENTS;
-import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.LIVE;
-import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.VIDEO;
-
-import java.util.List;
-
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.channel.ChannelExtractor;
 import org.schabi.newpipe.extractor.comments.CommentsExtractor;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.feed.FeedExtractor;
 import org.schabi.newpipe.extractor.kiosk.KioskExtractor;
 import org.schabi.newpipe.extractor.kiosk.KioskList;
 import org.schabi.newpipe.extractor.linkhandler.LinkHandler;
@@ -26,6 +19,8 @@ import org.schabi.newpipe.extractor.playlist.PlaylistExtractor;
 import org.schabi.newpipe.extractor.search.SearchExtractor;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelExtractor;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeCommentsExtractor;
+import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeFeedExtractor;
+import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeMusicSearchExtractor;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeSearchExtractor;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor;
@@ -41,6 +36,16 @@ import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeTrending
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 import org.schabi.newpipe.extractor.subscription.SubscriptionExtractor;
 import org.schabi.newpipe.extractor.suggestion.SuggestionExtractor;
+
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import static java.util.Arrays.asList;
+import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.AUDIO;
+import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.COMMENTS;
+import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.LIVE;
+import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.VIDEO;
 
 /*
  * Created by Christian Schabesberger on 23.08.15.
@@ -72,7 +77,7 @@ public class YoutubeService extends StreamingService {
     public String getBaseUrl() {
         return "https://youtube.com";
     }
-    
+
     @Override
     public LinkHandlerFactory getStreamLHFactory() {
         return YoutubeStreamLinkHandlerFactory.getInstance();
@@ -110,7 +115,13 @@ public class YoutubeService extends StreamingService {
 
     @Override
     public SearchExtractor getSearchExtractor(SearchQueryHandler query) {
-        return new YoutubeSearchExtractor(this, query);
+        final List<String> contentFilters = query.getContentFilters();
+
+        if (contentFilters.size() > 0 && contentFilters.get(0).startsWith("music_")) {
+            return new YoutubeMusicSearchExtractor(this, query);
+        } else {
+            return new YoutubeSearchExtractor(this, query);
+        }
     }
 
     @Override
@@ -129,7 +140,7 @@ public class YoutubeService extends StreamingService {
                 public KioskExtractor createNewKiosk(StreamingService streamingService,
                                                      String url,
                                                      String id)
-                throws ExtractionException {
+                        throws ExtractionException {
                     return new YoutubeTrendingExtractor(YoutubeService.this,
                             new YoutubeTrendingLinkHandlerFactory().fromUrl(url), id);
                 }
@@ -145,6 +156,12 @@ public class YoutubeService extends StreamingService {
     @Override
     public SubscriptionExtractor getSubscriptionExtractor() {
         return new YoutubeSubscriptionExtractor(this);
+    }
+
+    @Nonnull
+    @Override
+    public FeedExtractor getFeedExtractor(final String channelUrl) throws ExtractionException {
+        return new YoutubeFeedExtractor(this, getChannelLHFactory().fromUrl(channelUrl));
     }
 
     @Override
