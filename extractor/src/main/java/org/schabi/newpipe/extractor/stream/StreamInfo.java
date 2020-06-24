@@ -329,6 +329,11 @@ public class StreamInfo extends Info {
         } catch (Exception e) {
             streamInfo.addError(e);
         }
+        try {
+            streamInfo.setThumbnailSign(extractor.getThumbnailSign());
+        } catch (Exception e) {
+            streamInfo.addError(e);
+        }
 
         streamInfo.setRelatedStreams(ExtractorHelper.getRelatedVideosOrLogError(streamInfo, extractor));
 
@@ -337,6 +342,7 @@ public class StreamInfo extends Info {
 
     private StreamType streamType;
     private String thumbnailUrl = "";
+    private String thumbnailSign = "";
     private String textualUploadDate;
     private DateWrapper uploadDate;
     private long duration = -1;
@@ -679,6 +685,14 @@ public class StreamInfo extends Info {
 
     public void setSupportInfo(String support) {
         this.support = support;
+    }
+
+    public String getThumbnailSign() {
+        return thumbnailSign;
+    }
+
+    public void setThumbnailSign(String thumbnailSign) {
+        this.thumbnailSign = thumbnailSign;
     }
 
     public String getSupportInfo() {

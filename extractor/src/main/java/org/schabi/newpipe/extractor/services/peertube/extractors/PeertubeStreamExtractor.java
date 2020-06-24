@@ -288,6 +288,12 @@ public class PeertubeStreamExtractor extends StreamExtractor {
         }
     }
 
+    @Nonnull
+    @Override
+    public String getThumbnailSign() throws ParsingException {
+        return null;
+    }
+
     private String getRelatedStreamsUrl(List<String> tags) throws UnsupportedEncodingException {
         String url = baseUrl + PeertubeSearchQueryHandlerFactory.SEARCH_ENDPOINT;
         StringBuilder params = new StringBuilder();

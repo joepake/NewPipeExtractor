@@ -486,4 +486,7 @@ public abstract class StreamExtractor extends Extractor {
      */
     @Nonnull
     public abstract String getSupportInfo() throws ParsingException;
+
+    @Nonnull
+    public abstract String getThumbnailSign() throws ParsingException;
 }

@@ -3,6 +3,7 @@ package org.schabi.newpipe.extractor.services.youtube.extractors;
 import com.grack.nanojson.JsonArray;
 import com.grack.nanojson.JsonObject;
 import com.grack.nanojson.JsonParser;
+import com.grack.nanojson.JsonParserException;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
@@ -40,6 +41,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -351,6 +353,25 @@ public class YoutubeStreamExtractor extends StreamExtractor {
         } catch (Exception e) {
             throw new ParsingException("Could not get uploader avatar url", e);
         }
+    }
+
+    @Nonnull
+    @Override
+    public String getThumbnailSign() {
+        String fullSign = "", sign = "", sqp = "";
+        fullSign = playerResponse.getObject("storyboards").getObject("playerStoryboardSpecRenderer").getString("spec");
+
+        if (fullSign != null) {
+            String[] parts = fullSign.split("\\|");
+            int size = parts.length;
+            if (size > 1 && parts[size - 1].contains("rs$")) {
+                sign = parts[size - 1].substring(parts[size - 1].indexOf("rs$") + 3);
+            }
+            if (size > 1 && parts[0].contains("sqp")) {
+                sqp = parts[0].substring(parts[0].indexOf("sqp") + 3);
+            }
+        }
+        return sign + "&sqp" + sqp;
     }
 
     @Nonnull

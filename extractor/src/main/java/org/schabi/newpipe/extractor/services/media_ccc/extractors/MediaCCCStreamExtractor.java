@@ -292,4 +292,10 @@ public class MediaCCCStreamExtractor extends StreamExtractor {
     public String getSupportInfo() {
         return "";
     }
+
+    @Nonnull
+    @Override
+    public String getThumbnailSign() throws ParsingException {
+        return null;
+    }
 }

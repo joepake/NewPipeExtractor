@@ -318,4 +318,10 @@ public class SoundcloudStreamExtractor extends StreamExtractor {
     public String getSupportInfo() throws ParsingException {
         return "";
     }
+
+    @Nonnull
+    @Override
+    public String getThumbnailSign() throws ParsingException {
+        return null;
+    }
 }
